@@ -1,0 +1,156 @@
+[Laptop store.html](https://github.com/user-attachments/files/22207122/Laptop.store.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Laptop Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+  let laptops = [
+    { 
+      model: "Dell Inspiron 15", 
+      price: 45000, 
+      image: "https://images.unsplash.com/photo-1587202372775-9897a2d8b33f?auto=format&fit=crop&w=500&q=80" 
+    },
+    { 
+      model: "HP Pavilion x360", 
+      price: 62000, 
+      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80" 
+    },
+    { 
+      model: "Lenovo ThinkPad E14", 
+      price: 72000, 
+      image: "https://images.unsplash.com/photo-1611186871348-b1ce696e52b6?auto=format&fit=crop&w=500&q=80" 
+    },
+    { 
+      model: "Acer Aspire 5", 
+      price: 38000, 
+      image: "https://images.unsplash.com/photo-1593642532973-d31b6557fa68?auto=format&fit=crop&w=500&q=80" 
+    },
+    { 
+      model: "Apple MacBook Air M1", 
+      price: 92000, 
+      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=500&q=80" 
+    },
+    { 
+      model: "Asus VivoBook 14", 
+      price: 30000, 
+      image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=500&q=80" 
+    }
+  ];
+    let cart = [];
+
+    function displayLaptops(list) {
+      let container = document.getElementById("products");
+      container.innerHTML = "";
+
+      list.forEach(laptop => {
+        let card = document.createElement("div");
+        card.className = "bg-white shadow-md p-4 rounded-lg text-center";
+
+        card.innerHTML = `
+          <img src="${laptop.image}" alt="${laptop.model}" class="w-full h-40 object-contain rounded mb-2 bg-gray-50">
+          <h2 class="text-lg font-bold">${laptop.model}</h2>
+          <p class="text-gray-600 mb-2">Ksh ${laptop.price}</p>
+          <button onclick="addToCart('${laptop.model}', ${laptop.price})"
+                  class="bg-blue-600 text-white px-4 py-2 rounded">
+            Add to Cart
+          </button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterByPrice() {
+      let min = parseInt(document.getElementById("minPrice").value) || 12000;
+      let max = parseInt(document.getElementById("maxPrice").value) || 92000;
+
+      let filtered = laptops.filter(l => l.price >= min && l.price <= max);
+      displayLaptops(filtered);
+    }
+
+    function addToCart(model, price) {
+      cart.push({ model, price });
+      updateCart();
+    }
+
+    function updateCart() {
+      let list = document.getElementById("cartList");
+      list.innerHTML = "";
+      cart.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = item.model + " - Ksh " + item.price;
+        list.appendChild(li);
+      });
+
+      let total = cart.reduce((sum, i) => sum + i.price, 0);
+      document.getElementById("total").textContent = total;
+    }
+
+    function checkout(event) {
+      event.preventDefault();
+
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      let name = document.getElementById("name").value;
+      let email = document.getElementById("email").value;
+      let address = document.getElementById("address").value;
+
+      if (!name || !email || !address) {
+        alert("Please fill in all checkout details.");
+        return;
+      }
+
+      alert(`✅ Order placed successfully!\n\nCustomer: ${name}\nEmail: ${email}\nAddress: ${address}\n\nItems: ${cart.length}\nTotal: Ksh ${document.getElementById("total").textContent}`);
+
+      // Clear cart and form
+      cart = [];
+      updateCart();
+      document.getElementById("checkoutForm").reset();
+    }
+
+    window.onload = () => displayLaptops(laptops);
+  </script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+  <!-- Header -->
+  <header class="bg-blue-700 p-6 text-white text-center text-3xl font-bold shadow-md">
+    🖥️ Laptop Store
+  </header>
+
+  <!-- Filter Section -->
+  <section class="p-6 bg-white shadow m-6 rounded-lg flex flex-col md:flex-row items-center gap-4">
+    <h2 class="font-bold text-lg">Filter by Price</h2>
+    <input type="number" id="minPrice" placeholder="Min (12000)" class="border p-2 rounded w-40">
+    <input type="number" id="maxPrice" placeholder="Max (92000)" class="border p-2 rounded w-40">
+    <button onclick="filterByPrice()" class="bg-green-600 text-white px-4 py-2 rounded">Apply</button>
+  </section>
+
+  <!-- Products Section -->
+  <section id="products" class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6"></section>
+
+  <!-- Cart Section -->
+  <section class="p-6 bg-white shadow-lg m-6 rounded-lg">
+    <h2 class="text-xl font-bold mb-2">🛒 Shopping Cart</h2>
+    <ul id="cartList" class="list-disc pl-5"></ul>
+    <p class="font-bold mt-2">Total: Ksh <span id="total">0</span></p>
+  </section>
+
+  <!-- Checkout Section -->
+  <section class="p-6 bg-white shadow-lg m-6 rounded-lg">
+    <h2 class="text-xl font-bold mb-4">📝 Checkout</h2>
+    <form id="checkoutForm" onsubmit="checkout(event)" class="space-y-4">
+      <input type="text" id="name" placeholder="Full Name" class="w-full border p-2 rounded">
+      <input type="email" id="email" placeholder="Email Address" class="w-full border p-2 rounded">
+      <textarea id="address" placeholder="Delivery Address" class="w-full border p-2 rounded"></textarea>
+      <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded w-full">Place Order</button>
+    </form>
+  </section>
+
+</body>
+</html>
